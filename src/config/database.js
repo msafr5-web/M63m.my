@@ -11,6 +11,9 @@ const sequelize = new Sequelize(env.DATABASE_URL, {
   define: {
     underscored: true,
     freezeTableName: true,
+    // Keep attribute names identical to the SWET columns (otherwise Sequelize exposes createdAt).
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
   },
 });
 
