@@ -1,0 +1,18 @@
+<article class="consultant-card">
+  <div class="consultant-top">
+    <span class="avatar lg"><%= initials(c.full_name) %></span>
+    <div>
+      <h3><%= c.full_name %><% if (c.is_verified) { %><span class="verified" title="مستشار معتمد"><%- icon('shield') %></span><% } %></h3>
+      <span class="faint">مستشار قطاع المطاعم والمقاهي</span>
+    </div>
+  </div>
+  <% if (c.bio) { %><p class="bio"><%= c.bio %></p><% } %>
+  <div class="consultant-stats">
+    <div><b class="num"><%= c.open_slots %></b><small>موعد متاح</small></div>
+    <div><b><%= c.from_price !== null ? formatMoney(c.from_price) : '—' %></b><small>يبدأ من</small></div>
+    <div><b><%= c.next_slot ? formatDay(c.next_slot).split('،')[0] : '—' %></b><small>أقرب موعد</small></div>
+  </div>
+  <a class="btn <%= c.open_slots ? 'btn-gold' : 'btn-ghost' %> btn-block" href="/consultations/<%= c.id %>">
+    <%= c.open_slots ? 'احجز استشارة' : 'عرض الملف' %><%- icon('arrow') %>
+  </a>
+</article>

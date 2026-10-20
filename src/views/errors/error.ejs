@@ -1,0 +1,15 @@
+<%- include('../partials/head') %>
+
+<section class="section">
+  <div class="container">
+    <div class="empty">
+      <div class="tile"><%- icon(status === 404 ? 'search' : 'x') %></div>
+      <span class="kicker num"><%= status %></span>
+      <h3><%= message %></h3>
+      <p><%= status === 404 ? 'ربما تم حذف الصفحة أو تغيّر رابطها.' : 'نعتذر عن ذلك، حاول مرة أخرى بعد قليل.' %></p>
+      <a class="btn btn-gold" href="/">العودة للرئيسية</a>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>

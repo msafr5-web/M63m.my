@@ -1,0 +1,101 @@
+<%- include('../partials/head') %>
+
+<section class="page-head">
+  <div class="pattern pattern-layer" aria-hidden="true"></div>
+  <div class="container">
+    <nav class="crumbs" aria-label="مسار التنقل"><a href="/marketplace">سوق الطلبات</a><span>/</span><span>طلب جديد</span></nav>
+    <h1>نشر طلب جديد</h1>
+    <p>اختر القسم، أكمل التفاصيل، وحدد المنصات التي تريد مشاركة طلبك عليها تلقائياً.</p>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <form class="form-card" data-api-form="/api/v1/marketplace/items" data-redirect="/marketplace/{id}" novalidate>
+      <div class="alert alert-error" data-form-alert hidden></div>
+
+      <div class="fieldset-title"><span class="step num">1</span>القسم</div>
+      <div class="choice-grid" role="radiogroup" aria-label="القسم">
+        <% categories.forEach((c) => { %>
+          <label class="choice">
+            <input type="radio" name="category" value="<%= c.key %>" <%= preset === c.key ? 'checked' : '' %> data-category-input>
+            <span class="choice-body"><%- icon(c.icon) %><b><%= c.label %></b><small><%= c.hint %></small></span>
+          </label>
+        <% }) %>
+      </div>
+
+      <div class="fieldset-title"><span class="step num">2</span>تفاصيل الطلب</div>
+      <div class="form-grid">
+        <div class="field-group span-2">
+          <label for="title">عنوان الطلب</label>
+          <input id="title" name="title" required maxlength="200" placeholder="مثال: مطلوب باريستا محترف - الرياض">
+          <span class="field-error" data-error-for="title"></span>
+        </div>
+        <div class="field-group span-2">
+          <label for="description">الوصف</label>
+          <textarea id="description" name="description" required maxlength="5000" placeholder="اكتب التفاصيل المهمة: الخبرة المطلوبة، المواصفات، الكميات، طريقة التواصل..."></textarea>
+          <span class="field-error" data-error-for="description"></span>
+        </div>
+        <div class="field-group">
+          <label for="location">المدينة / الحي</label>
+          <input id="location" name="location" maxlength="100" placeholder="الرياض - حي الملقا">
+          <span class="field-error" data-error-for="location"></span>
+        </div>
+        <div class="field-group">
+          <label for="price">السعر (ر.س) <span class="hint">اختياري</span></label>
+          <input id="price" name="price" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00">
+          <span class="field-error" data-error-for="price"></span>
+        </div>
+        <div class="field-group span-2">
+          <label for="image">رابط صورة <span class="hint">اختياري</span></label>
+          <input id="image" name="images[]" type="url" placeholder="https://...">
+          <span class="field-error" data-error-for="images.0"></span>
+        </div>
+      </div>
+
+      <div data-meta-for="JOBS" class="form-grid">
+        <div class="fieldset-title span-2"><span class="step num">3</span>تفاصيل الوظيفة</div>
+        <div class="field-group"><label for="m-job">المسمى الوظيفي</label><input id="m-job" name="metadata.job_title" placeholder="Head Barista"></div>
+        <div class="field-group"><label for="m-salary">نطاق الراتب</label><input id="m-salary" name="metadata.salary_range" placeholder="4000-5000 SAR"></div>
+        <div class="field-group"><label for="m-exp">سنوات الخبرة</label><input id="m-exp" name="metadata.experience_years" type="number" min="0" max="50" data-number></div>
+        <div class="field-group"><label for="m-type">نوع الدوام</label>
+          <select id="m-type" name="metadata.employment_type"><option value="">—</option><option>دوام كامل</option><option>دوام جزئي</option><option>مؤقت / موسمي</option></select>
+        </div>
+      </div>
+      <div data-meta-for="EQUIPMENT" class="form-grid" hidden>
+        <div class="fieldset-title span-2"><span class="step num">3</span>تفاصيل المعدة</div>
+        <div class="field-group"><label for="m-cond">الحالة</label>
+          <select id="m-cond" name="metadata.condition"><option value="">—</option><option>جديدة</option><option>مستعملة - ممتازة</option><option>مستعملة - جيدة</option><option>مطلوب شراء</option></select>
+        </div>
+        <div class="field-group"><label for="m-brand">العلامة التجارية</label><input id="m-brand" name="metadata.brand" placeholder="La Marzocco"></div>
+      </div>
+      <div data-meta-for="SUPPLIES" class="form-grid" hidden>
+        <div class="fieldset-title span-2"><span class="step num">3</span>تفاصيل التوريد</div>
+        <div class="field-group"><label for="m-sup">اسم المورد / المنتج</label><input id="m-sup" name="metadata.supplier_name"></div>
+        <div class="field-group"><label for="m-min">الحد الأدنى للطلب</label><input id="m-min" name="metadata.min_order" placeholder="50 كجم"></div>
+      </div>
+      <div data-meta-for="SERVICES" class="form-grid" hidden>
+        <div class="fieldset-title span-2"><span class="step num">3</span>تفاصيل الخدمة</div>
+        <div class="field-group"><label for="m-svc">نوع الخدمة</label>
+          <select id="m-svc" name="metadata.service_type"><option value="">—</option><option>تصميم داخلي</option><option>تراخيص حكومية</option><option>تسويق</option><option>أخرى</option></select>
+        </div>
+        <div class="field-group"><label for="m-cov">نطاق التغطية</label><input id="m-cov" name="metadata.coverage" placeholder="الرياض والقصيم"></div>
+      </div>
+
+      <div class="fieldset-title"><span class="step num">4</span>النشر على منصات التواصل <span class="hint">اختياري</span></div>
+      <div class="choice-grid compact">
+        <label class="choice"><input type="checkbox" name="auto_share_platforms[]" value="X"><span class="choice-body"><%- icon('x_brand') %><b>X</b></span></label>
+        <label class="choice"><input type="checkbox" name="auto_share_platforms[]" value="FACEBOOK"><span class="choice-body"><%- icon('facebook') %><b>فيسبوك</b></span></label>
+        <label class="choice"><input type="checkbox" name="auto_share_platforms[]" value="TIKTOK"><span class="choice-body"><%- icon('tiktok') %><b>تيك توك</b></span></label>
+        <label class="choice"><input type="checkbox" name="auto_share_platforms[]" value="SNAPCHAT"><span class="choice-body"><%- icon('snapchat') %><b>سناب شات</b></span></label>
+      </div>
+
+      <div class="form-actions">
+        <a class="btn btn-ghost" href="/marketplace">إلغاء</a>
+        <button class="btn btn-gold" type="submit"><%- icon('check') %>نشر الطلب</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>

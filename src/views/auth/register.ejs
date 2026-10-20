@@ -1,0 +1,60 @@
+<%- include('../partials/head') %>
+
+<div class="auth-shell">
+  <aside class="auth-aside">
+    <div class="pattern pattern-layer" aria-hidden="true"></div>
+    <h2>انضم لمجتمع قطاع المطاعم والمقاهي</h2>
+    <ul class="auth-points">
+      <li><%- icon('chat') %>استشارات مباشرة مع خبراء التشغيل</li>
+      <li><%- icon('chef') %>وظائف الطهاة والباريستا ومدراء الفروع</li>
+      <li><%- icon('equipment') %>معدات، موردون وخدمات مساندة</li>
+      <li><%- icon('share') %>نشر تلقائي على X وفيسبوك وتيك توك وسناب</li>
+    </ul>
+  </aside>
+
+  <div class="auth-main">
+    <div class="auth-box reveal">
+      <h1>إنشاء حساب</h1>
+      <p>اختر نوع حسابك، فلكل نوع لوحة تحكم تناسبه.</p>
+      <form data-api-form="/api/v1/auth/register" data-redirect="/dashboard" novalidate>
+        <div class="alert alert-error" data-form-alert hidden></div>
+
+        <div class="role-grid" role="radiogroup" aria-label="نوع الحساب">
+          <label class="choice"><input type="radio" name="role" value="CLIENT" <%= role === 'CLIENT' ? 'checked' : '' %>><span class="choice-body"><%- icon('coffee') %><b>صاحب منشأة</b></span></label>
+          <label class="choice"><input type="radio" name="role" value="CONSULTANT" <%= role === 'CONSULTANT' ? 'checked' : '' %>><span class="choice-body"><%- icon('chat') %><b>مستشار</b></span></label>
+          <label class="choice"><input type="radio" name="role" value="VENDOR" <%= role === 'VENDOR' ? 'checked' : '' %>><span class="choice-body"><%- icon('briefcase') %><b>مورد / باحث عمل</b></span></label>
+        </div>
+
+        <div class="field-group">
+          <label for="full_name">الاسم الكامل</label>
+          <input id="full_name" name="full_name" autocomplete="name" required maxlength="150">
+          <span class="field-error" data-error-for="full_name"></span>
+        </div>
+        <div class="field-group">
+          <label for="email">البريد الإلكتروني</label>
+          <input id="email" name="email" type="email" autocomplete="email" required placeholder="name@example.com">
+          <span class="field-error" data-error-for="email"></span>
+        </div>
+        <div class="field-group">
+          <label for="phone">رقم الجوال</label>
+          <input id="phone" name="phone" type="tel" autocomplete="tel" required placeholder="05xxxxxxxx">
+          <span class="field-error" data-error-for="phone"></span>
+        </div>
+        <div class="field-group">
+          <label for="password">كلمة المرور <span class="hint">8 أحرف على الأقل</span></label>
+          <input id="password" name="password" type="password" autocomplete="new-password" required minlength="8">
+          <span class="field-error" data-error-for="password"></span>
+        </div>
+        <div class="field-group" data-consultant-only <%= role === 'CONSULTANT' ? '' : 'hidden' %>>
+          <label for="bio">نبذة عن خبرتك</label>
+          <textarea id="bio" name="bio" maxlength="2000" placeholder="سنوات الخبرة، المجالات التي تقدم فيها الاستشارة، أبرز المشاريع..."></textarea>
+          <span class="hint">يراجع فريق المنصة طلبات المستشارين قبل ظهورها للعملاء.</span>
+        </div>
+        <button class="btn btn-gold btn-block" type="submit">إنشاء الحساب<%- icon('arrow') %></button>
+      </form>
+      <p class="auth-switch">لديك حساب؟ <a href="/login">سجّل الدخول</a></p>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/foot') %>

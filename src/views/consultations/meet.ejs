@@ -1,0 +1,53 @@
+<%- include('../partials/head') %>
+<% const isConsultant = currentUser.id === consultation.consultant_id; const other = isConsultant ? consultation.client : consultation.consultant; %>
+
+<section class="page-head">
+  <div class="pattern pattern-layer" aria-hidden="true"></div>
+  <div class="container">
+    <nav class="crumbs" aria-label="مسار التنقل"><a href="/dashboard">لوحة التحكم</a><span>/</span><span>غرفة الجلسة</span></nav>
+    <h1><%= consultation.topic %></h1>
+    <p><span class="badge badge-<%= consultation.status %>"><%= statusLabel(consultation.status) %></span></p>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container room">
+    <div class="room-stage">
+      <div class="pattern pattern-layer" aria-hidden="true"></div>
+      <div>
+        <span class="avatar xl"><%= initials(other.full_name) %></span>
+        <h2 class="on-dark"><%= other.full_name %></h2>
+        <% if (consultation.slot && consultation.status === 'SCHEDULED') { %>
+          <p class="muted-light">تبدأ الجلسة بعد</p>
+          <div class="countdown" data-countdown="<%= new Date(consultation.slot.start_time).toISOString() %>">--:--:--</div>
+        <% } else if (consultation.status === 'IN_PROGRESS') { %>
+          <p class="muted-light">الجلسة جارية الآن</p>
+        <% } else { %>
+          <p class="muted-light">هذه الجلسة <%= statusLabel(consultation.status) %></p>
+        <% } %>
+      </div>
+    </div>
+
+    <aside>
+      <div class="panel">
+        <h2>تفاصيل الجلسة</h2>
+        <dl class="spec-list one-col">
+          <div><dt><%= isConsultant ? 'العميل' : 'المستشار' %></dt><dd><%= other.full_name %></dd></div>
+          <% if (consultation.slot) { %>
+            <div><dt>الموعد</dt><dd><%= formatDay(consultation.slot.start_time) %> · <span><%= formatTime(consultation.slot.start_time) %> – <%= formatTime(consultation.slot.end_time) %></span></dd></div>
+            <div><dt>الرسوم</dt><dd><%= formatMoney(consultation.slot.price) %></dd></div>
+          <% } %>
+          <div><dt>رابط الجلسة</dt><dd><a class="link-arrow" href="<%= consultation.meeting_link %>" data-copy-link>نسخ الرابط<%- icon('share') %></a></dd></div>
+        </dl>
+      </div>
+      <% if (consultation.notes) { %>
+        <div class="panel">
+          <h2>ملاحظات العميل</h2>
+          <p class="prose"><%= consultation.notes %></p>
+        </div>
+      <% } %>
+    </aside>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>

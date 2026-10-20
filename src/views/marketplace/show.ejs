@@ -1,0 +1,82 @@
+<%- include('../partials/head') %>
+<% const price = formatMoney(item.price); const meta = Object.entries(item.metadata || {}).filter(([, v]) => v !== '' && v !== null); const shareUrl = appUrl + '/marketplace/' + item.id; %>
+
+<section class="page-head">
+  <div class="pattern pattern-layer" aria-hidden="true"></div>
+  <div class="container">
+    <nav class="crumbs" aria-label="مسار التنقل">
+      <a href="/marketplace">سوق الطلبات</a><span>/</span><a href="/marketplace?category=<%= item.category %>"><%= category.label %></a>
+    </nav>
+    <h1><%= item.title %></h1>
+    <div class="item-meta">
+      <span class="badge badge-dark"><%- icon(category.icon) %><%= category.label %></span>
+      <% if (item.status !== 'ACTIVE') { %><span class="badge badge-<%= item.status %>"><%= statusLabel(item.status) %></span><% } %>
+      <% if (item.location) { %><span><%- icon('pin') %><%= item.location %></span><% } %>
+      <span><%- icon('clock') %>نُشر <%= relativeTime(item.created_at) %></span>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container detail-grid">
+    <div>
+      <% if (item.images && item.images.length) { %>
+        <div class="detail-media"><img src="<%= item.images[0] %>" alt="<%= item.title %>"></div>
+      <% } %>
+      <div class="panel">
+        <h2>تفاصيل الطلب</h2>
+        <p class="prose"><%= item.description %></p>
+      </div>
+      <% if (meta.length) { %>
+        <div class="panel">
+          <h2>معلومات إضافية</h2>
+          <dl class="spec-list">
+            <% meta.forEach(([k, v]) => { %><div><dt><%= metaLabel(k) %></dt><dd><%= v %></dd></div><% }) %>
+          </dl>
+        </div>
+      <% } %>
+    </div>
+
+    <aside class="sticky">
+      <div class="panel">
+        <span class="faint"><%= item.category === 'JOBS' ? 'الراتب' : 'السعر' %></span>
+        <div class="price-lg"><%= item.metadata && item.metadata.salary_range ? item.metadata.salary_range : (price || 'عند التواصل') %></div>
+
+        <div class="owner-block">
+          <span class="avatar lg"><%= initials(item.owner.full_name) %></span>
+          <div><b><%= item.owner.full_name %></b><small class="faint"><%= roleLabel(item.owner.role) %></small></div>
+        </div>
+
+        <% if (currentUser) { %>
+          <% if (item.owner.phone) { %><a class="contact-row" href="tel:<%= item.owner.phone %>"><%- icon('phone') %><span class="num"><%= item.owner.phone %></span></a><% } %>
+          <% if (item.owner.email) { %><a class="contact-row" href="mailto:<%= item.owner.email %>"><%- icon('mail') %><span><%= item.owner.email %></span></a><% } %>
+        <% } else { %>
+          <div class="alert alert-info"><%- icon('user') %><span>سجّل دخولك لعرض بيانات التواصل مع صاحب الطلب.</span></div>
+          <a class="btn btn-gold btn-block" href="/login?next=/marketplace/<%= item.id %>">تسجيل الدخول للتواصل</a>
+        <% } %>
+
+        <% if (isOwner) { %>
+          <div class="owner-actions">
+            <% if (item.status === 'ACTIVE') { %>
+              <button class="btn btn-danger btn-block" type="button" data-item-status="CLOSED" data-item-id="<%= item.id %>"><%- icon('x') %>إغلاق الطلب</button>
+            <% } else { %>
+              <button class="btn btn-ghost btn-block" type="button" data-item-status="ACTIVE" data-item-id="<%= item.id %>"><%- icon('check') %>إعادة تفعيل الطلب</button>
+            <% } %>
+          </div>
+        <% } %>
+      </div>
+
+      <div class="panel">
+        <h2>شارك الطلب</h2>
+        <div class="share-row">
+          <a href="https://x.com/intent/post?text=<%= encodeURIComponent(item.title) %>&url=<%= encodeURIComponent(shareUrl) %>" target="_blank" rel="noopener" aria-label="مشاركة على X"><%- icon('x_brand') %></a>
+          <a href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(shareUrl) %>" target="_blank" rel="noopener" aria-label="مشاركة على فيسبوك"><%- icon('facebook') %></a>
+          <a href="https://wa.me/?text=<%= encodeURIComponent(item.title + ' ' + shareUrl) %>" target="_blank" rel="noopener" aria-label="مشاركة على واتساب"><%- icon('chat') %></a>
+          <a href="<%= shareUrl %>" data-copy-link aria-label="نسخ الرابط"><%- icon('share') %></a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>

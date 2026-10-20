@@ -1,0 +1,133 @@
+<%- include('partials/head') %>
+
+<section class="hero">
+  <div class="pattern pattern-layer" aria-hidden="true"></div>
+  <div class="container">
+    <div class="reveal">
+      <span class="eyebrow">منصة قطاع المطاعم والمقاهي في السعودية</span>
+      <h1>كل ما يحتاجه مطعمك<br>في <em>مكان واحد</em></h1>
+      <p class="hero-lead">استشر خبراء التشغيل، وظّف طاقمك، واعثر على المعدات والموردين — بنفس روح القنوات المتخصصة التي يتابعها أهل القطاع، لكن منظّمة وقابلة للبحث.</p>
+      <div class="hero-actions">
+        <a class="btn btn-gold" href="/consultations"><%- icon('chat') %>احجز استشارة</a>
+        <a class="btn btn-ghost-light" href="/marketplace/new"><%- icon('plus') %>انشر طلبك مجاناً</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong class="num"><%= Object.values(counts).reduce((a, b) => a + b, 0) %></strong><span>طلب نشط في السوق</span></div>
+        <div><strong class="num"><%= counts.JOBS %></strong><span>فرصة وظيفية</span></div>
+        <div><strong class="num"><%= consultants.length %><% if (consultants.length >= 3) { %>+<% } %></strong><span>مستشار معتمد</span></div>
+      </div>
+    </div>
+
+    <aside class="hero-card reveal reveal-2" aria-label="أحدث الطلبات">
+      <div class="hero-card-head"><span>أحدث ما نُشر</span><span class="live-dot">مباشر</span></div>
+      <% if (latest.length) { %>
+        <% latest.slice(0, 4).forEach((item) => { %>
+          <a class="feed-row" href="/marketplace/<%= item.id %>">
+            <span class="tile"><%- icon(categoryMap[item.category].icon) %></span>
+            <div><b><%= item.title %></b><small><%= categoryMap[item.category].label %><% if (item.location) { %> · <%= item.location %><% } %> · <%= relativeTime(item.created_at) %></small></div>
+          </a>
+        <% }) %>
+      <% } else { %>
+        <div class="feed-row"><span class="tile"><%- icon('spark') %></span><div><b>كن أول من ينشر طلباً</b><small>وظيفة، معدات، توريد أو خدمة</small></div></div>
+      <% } %>
+    </aside>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="kicker">سوق الطلبات المتخصص</span>
+        <h2>أربعة أقسام تغطي تشغيل مطعمك</h2>
+        <p>انشر طلبك أو تصفح طلبات غيرك حسب القسم، ويصل طلبك تلقائياً إلى منصات التواصل التي تختارها.</p>
+      </div>
+      <a class="link-arrow" href="/marketplace">تصفح السوق كاملاً<%- icon('arrow') %></a>
+    </div>
+    <div class="cat-grid">
+      <% categories.forEach((c) => { %>
+        <a class="cat-tile" href="/marketplace?category=<%= c.key %>">
+          <span class="cat-icon"><%- icon(c.icon) %></span>
+          <h3><%= c.label %></h3>
+          <p><%= c.hint %></p>
+          <span class="cat-foot"><span><b class="num"><%= counts[c.key] %></b> طلب نشط</span><%- icon('arrow') %></span>
+        </a>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="kicker">الجديد في السوق</span>
+        <h2>أحدث الطلبات</h2>
+      </div>
+      <a class="link-arrow" href="/marketplace">عرض الكل<%- icon('arrow') %></a>
+    </div>
+    <% if (latest.length) { %>
+      <div class="item-grid">
+        <% latest.forEach((item) => { %><%- include('partials/item-card', { item }) %><% }) %>
+      </div>
+    <% } else { %>
+      <div class="empty">
+        <div class="tile"><%- icon('inbox') %></div>
+        <h3>السوق بانتظار أول طلب</h3>
+        <p>انشر وظيفة أو معدات أو طلب توريد، وسيظهر هنا لكل أصحاب المطاعم والموردين.</p>
+        <a class="btn btn-gold" href="/marketplace/new"><%- icon('plus') %>انشر أول طلب</a>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="kicker">استشارات الخبراء</span>
+        <h2>اسأل من جرّب قبلك</h2>
+        <p>مستشارون معتمدون في التشغيل، تقليل الهدر، التسعير وافتتاح الفروع. اختر الموعد المناسب واحجز مباشرة.</p>
+      </div>
+      <a class="link-arrow" href="/consultations">كل المستشارين<%- icon('arrow') %></a>
+    </div>
+    <% if (consultants.length) { %>
+      <div class="consultant-grid">
+        <% consultants.forEach((c) => { %><%- include('partials/consultant-card', { c }) %><% }) %>
+      </div>
+    <% } else { %>
+      <div class="empty">
+        <div class="tile"><%- icon('chat') %></div>
+        <h3>نستقبل المستشارين الآن</h3>
+        <p>إن كانت لديك خبرة في قطاع المطاعم والمقاهي، انضم وابدأ باستقبال طلبات الاستشارة.</p>
+        <a class="btn btn-ghost" href="/register?role=CONSULTANT">انضم كمستشار</a>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="section-head"><div><span class="kicker">كيف تعمل المنصة</span><h2>ثلاث خطوات فقط</h2></div></div>
+    <div class="steps">
+      <div class="step-card"><span class="tile"><%- icon('user') %></span><h3>أنشئ حسابك</h3><p>صاحب مطعم، مستشار، أو مورد وباحث عن عمل — لكل نوع لوحة تحكم تناسبه.</p></div>
+      <div class="step-card"><span class="tile"><%- icon('layers') %></span><h3>انشر أو احجز</h3><p>انشر طلبك في القسم المناسب، أو اختر مستشاراً واحجز موعداً متاحاً في جدوله.</p></div>
+      <div class="step-card"><span class="tile"><%- icon('share') %></span><h3>اوصل لجمهور أوسع</h3><p>شارك طلبك تلقائياً على X وفيسبوك وتيك توك وسناب شات بضغطة زر.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="cta-band">
+      <div class="pattern pattern-layer" aria-hidden="true"></div>
+      <div>
+        <h2>عندك خبرة في المطاعم والمقاهي؟</h2>
+        <p>انضم كمستشار، حدّد مواعيدك وأسعارك، واستقبل الحجوزات من أصحاب المشاريع مباشرة.</p>
+      </div>
+      <a class="btn btn-gold" href="/register?role=CONSULTANT">انضم كمستشار<%- icon('arrow') %></a>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/foot') %>

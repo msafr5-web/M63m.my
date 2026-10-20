@@ -1,0 +1,38 @@
+<%- include('../partials/head') %>
+
+<div class="auth-shell">
+  <aside class="auth-aside">
+    <div class="pattern pattern-layer" aria-hidden="true"></div>
+    <blockquote>«المطعم الناجح لا يُدار بالحظ؛ يُدار بالأرقام، والطاقم الصحيح، ومستشار يعرف الطريق.»</blockquote>
+    <h2>أهلاً بعودتك</h2>
+    <ul class="auth-points">
+      <li><%- icon('check-circle') %>تابع حجوزاتك واستشاراتك من لوحة واحدة</li>
+      <li><%- icon('check-circle') %>انشر طلباتك وشاركها على منصات التواصل</li>
+      <li><%- icon('check-circle') %>تواصل مباشرة مع الموردين والمرشحين</li>
+    </ul>
+  </aside>
+
+  <div class="auth-main">
+    <div class="auth-box reveal">
+      <h1>تسجيل الدخول</h1>
+      <p>أدخل بريدك الإلكتروني وكلمة المرور للمتابعة.</p>
+      <form data-api-form="/api/v1/auth/login" data-redirect="<%= next %>" novalidate>
+        <div class="alert alert-error" data-form-alert hidden></div>
+        <div class="field-group">
+          <label for="email">البريد الإلكتروني</label>
+          <input id="email" name="email" type="email" autocomplete="email" required placeholder="name@example.com">
+          <span class="field-error" data-error-for="email"></span>
+        </div>
+        <div class="field-group">
+          <label for="password">كلمة المرور</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required>
+          <span class="field-error" data-error-for="password"></span>
+        </div>
+        <button class="btn btn-gold btn-block" type="submit">دخول<%- icon('arrow') %></button>
+      </form>
+      <p class="auth-switch">ليس لديك حساب؟ <a href="/register">أنشئ حساباً مجاناً</a></p>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/foot') %>

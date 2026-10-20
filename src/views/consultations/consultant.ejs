@@ -1,0 +1,91 @@
+<%- include('../partials/head') %>
+<% const days = groupSlotsByDay(slots); const isSelf = currentUser && currentUser.id === consultant.id; %>
+
+<section class="page-head">
+  <div class="pattern pattern-layer" aria-hidden="true"></div>
+  <div class="container">
+    <nav class="crumbs" aria-label="مسار التنقل"><a href="/consultations">استشارات الخبراء</a><span>/</span><span><%= consultant.full_name %></span></nav>
+    <div class="consultant-top">
+      <span class="avatar xl"><%= initials(consultant.full_name) %></span>
+      <div>
+        <h1><%= consultant.full_name %></h1>
+        <p><span class="verified-light"><%- icon('shield') %>مستشار معتمد</span> · مستشار قطاع المطاعم والمقاهي</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container detail-grid">
+    <div>
+      <% if (consultant.bio) { %>
+        <div class="panel">
+          <h2>نبذة</h2>
+          <p class="prose"><%= consultant.bio %></p>
+        </div>
+      <% } %>
+
+      <div class="panel">
+        <div class="panel-head"><h2>المواعيد المتاحة</h2><span class="faint">بتوقيت الرياض</span></div>
+        <% if (days.length) { %>
+          <div role="radiogroup" aria-label="المواعيد">
+            <% days.forEach((d) => { %>
+              <div class="day-group">
+                <div class="day-label"><%- icon('calendar') %><%= d.label %></div>
+                <div class="slot-grid">
+                  <% d.slots.forEach((s) => { %>
+                    <label class="choice">
+                      <input type="radio" name="slot_id" value="<%= s.id %>" form="booking-form" data-slot-input
+                             data-slot-label="<%= d.label %> — <%= formatTime(s.start_time) %>" data-slot-price="<%= formatMoney(s.price) %>" <%= isSelf ? 'disabled' : '' %>>
+                      <span class="choice-body"><b><%= formatTime(s.start_time) %></b><small><%= formatMoney(s.price) %></small></span>
+                    </label>
+                  <% }) %>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } else { %>
+          <div class="empty compact">
+            <div class="tile"><%- icon('calendar') %></div>
+            <h3>لا توجد مواعيد متاحة حالياً</h3>
+            <p>يضيف المستشار مواعيد جديدة باستمرار، عُد لاحقاً.</p>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <aside class="sticky">
+      <div class="panel">
+        <h2>حجز الجلسة</h2>
+        <% if (isSelf) { %>
+          <div class="alert alert-info"><%- icon('user') %><span>هذا ملفك العام. أدِر مواعيدك من لوحة التحكم.</span></div>
+          <a class="btn btn-ghost btn-block" href="/dashboard">لوحة التحكم</a>
+        <% } else if (!days.length) { %>
+          <p class="muted">لا توجد مواعيد للحجز الآن.</p>
+        <% } else { %>
+          <form id="booking-form" data-api-form="/api/v1/consultations/book" data-redirect="/dashboard?booked=1" data-requires-login="<%= currentUser ? '' : '/login?next=/consultations/' + consultant.id %>" novalidate>
+            <input type="hidden" name="consultant_id" value="<%= consultant.id %>">
+            <div class="alert alert-error" data-form-alert hidden></div>
+            <div class="slot-summary" data-slot-summary>
+              <span data-slot-summary-label>اختر موعداً من القائمة</span>
+              <b data-slot-summary-price></b>
+            </div>
+            <span class="field-error" data-error-for="slot_id"></span>
+            <div class="field-group">
+              <label for="topic">موضوع الاستشارة</label>
+              <input id="topic" name="topic" required maxlength="255" placeholder="مثال: تقليل الهدر في مطعم وجبات سريعة">
+              <span class="field-error" data-error-for="topic"></span>
+            </div>
+            <div class="field-group">
+              <label for="notes">ملاحظات للمستشار <span class="hint">اختياري</span></label>
+              <textarea id="notes" name="notes" maxlength="3000" placeholder="نبذة عن مشروعك والتحدي الذي تواجهه..."></textarea>
+            </div>
+            <button class="btn btn-gold btn-block" type="submit"><%- icon('calendar') %><%= currentUser ? 'تأكيد الحجز' : 'سجّل الدخول للحجز' %></button>
+          </form>
+        <% } %>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>

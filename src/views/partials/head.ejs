@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= typeof title !== 'undefined' ? title + ' | ' : '' %>مطعم m63m</title>
+  <meta name="description" content="منصة استشارات وخدمات قطاع المطاعم والمقاهي: استشارات الخبراء، الوظائف، المعدات، الموردون والخدمات المساندة.">
+  <meta name="theme-color" content="#1b1816">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<a class="visually-hidden" href="#main">انتقل إلى المحتوى</a>
+<header class="site-header">
+  <div class="container">
+    <a class="brand" href="/" aria-label="مطعم m63m — الصفحة الرئيسية">
+      <span class="brand-mark">م</span>
+      <span class="brand-text"><strong>مطعم</strong><small>M63M.MY</small></span>
+    </a>
+
+    <% const onJobs = currentPath === '/marketplace' && typeof filters !== 'undefined' && filters.category === 'JOBS'; %>
+    <nav class="nav" id="site-nav" aria-label="القائمة الرئيسية">
+      <a href="/" class="<%= currentPath === '/' ? 'is-active' : '' %>">الرئيسية</a>
+      <a href="/marketplace" class="<%= currentPath.startsWith('/marketplace') && !onJobs ? 'is-active' : '' %>">سوق الطلبات</a>
+      <a href="/marketplace?category=JOBS" class="<%= onJobs ? 'is-active' : '' %>">الوظائف</a>
+      <a href="/consultations" class="<%= currentPath.startsWith('/consultations') ? 'is-active' : '' %>">استشارات الخبراء</a>
+      <% if (currentUser) { %>
+        <a href="/dashboard" class="<%= currentPath === '/dashboard' ? 'is-active' : '' %>">لوحة التحكم</a>
+        <button class="nav-logout" type="button" data-logout>تسجيل الخروج</button>
+      <% } %>
+    </nav>
+
+    <div class="header-actions">
+      <% if (currentUser) { %>
+        <a class="btn btn-gold btn-sm post-btn" href="/marketplace/new" aria-label="نشر طلب"><%- icon('plus') %><span>نشر طلب</span></a>
+        <a class="user-chip" href="/dashboard" title="<%= roleLabel(currentUser.role) %>">
+          <span class="name"><%= currentUser.full_name.split(' ')[0] %></span>
+          <span class="avatar"><%= initials(currentUser.full_name) %></span>
+        </a>
+        <button class="icon-btn logout-btn" type="button" data-logout aria-label="تسجيل الخروج" title="تسجيل الخروج"><%- icon('logout') %></button>
+      <% } else { %>
+        <a class="btn btn-ghost-light btn-sm" href="/login">تسجيل الدخول</a>
+        <a class="btn btn-gold btn-sm" href="/register">انضم مجاناً</a>
+      <% } %>
+      <button class="icon-btn nav-toggle" type="button" data-nav-toggle aria-controls="site-nav" aria-expanded="false" aria-label="القائمة"><%- icon('menu') %></button>
+    </div>
+  </div>
+</header>
+<main id="main">

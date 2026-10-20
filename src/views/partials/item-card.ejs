@@ -1,0 +1,31 @@
+<% const cat = categoryMap[item.category]; const price = formatMoney(item.price); %>
+<a class="item-card" href="/marketplace/<%= item.id %>">
+  <div class="item-media pattern">
+    <% if (item.images && item.images.length) { %>
+      <img src="<%= item.images[0] %>" alt="" loading="lazy">
+    <% } else { %>
+      <div class="placeholder"><%- icon(cat.icon) %></div>
+    <% } %>
+    <span class="badge badge-dark"><%= cat.label %></span>
+  </div>
+  <div class="item-body">
+    <h3><%= item.title %></h3>
+    <div class="item-meta">
+      <% if (item.location) { %><span><%- icon('pin') %><%= item.location %></span><% } %>
+      <span><%- icon('clock') %><%= relativeTime(item.created_at) %></span>
+      <% if (item.category === 'JOBS' && item.metadata && item.metadata.job_title) { %><span><%- icon('briefcase') %><%= item.metadata.job_title %></span><% } %>
+    </div>
+    <div class="item-foot">
+      <% if (item.metadata && item.metadata.salary_range) { %>
+        <span class="price num"><%= item.metadata.salary_range %></span>
+      <% } else if (price) { %>
+        <span class="price"><%= price %></span>
+      <% } else { %>
+        <span class="price price-none">السعر عند التواصل</span>
+      <% } %>
+      <% if (item.owner) { %>
+        <span class="owner"><span class="avatar"><%= initials(item.owner.full_name) %></span><%= item.owner.full_name.split(' ')[0] %></span>
+      <% } %>
+    </div>
+  </div>
+</a>

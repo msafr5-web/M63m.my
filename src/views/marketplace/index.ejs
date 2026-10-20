@@ -1,0 +1,68 @@
+<%- include('../partials/head') %>
+<% const active = filters.category ? categoryMap[filters.category] : null; %>
+
+<section class="page-head">
+  <div class="pattern pattern-layer" aria-hidden="true"></div>
+  <div class="container">
+    <nav class="crumbs" aria-label="مسار التنقل"><a href="/">الرئيسية</a><span>/</span><span>سوق الطلبات</span></nav>
+    <h1><%= active ? active.label : 'سوق الطلبات' %></h1>
+    <p><%= active ? active.hint : 'وظائف، معدات، موردون وخدمات مساندة لقطاع المطاعم والمقاهي — محدّثة لحظة بلحظة.' %></p>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <div class="filter-bar">
+      <div class="chips" role="navigation" aria-label="الأقسام">
+        <a class="chip <%= !filters.category ? 'is-active' : '' %>" href="<%= pageUrl('/marketplace', { q: filters.q, location: filters.location }, 1) %>">
+          الكل <span class="count num"><%= Object.values(counts).reduce((a, b) => a + b, 0) %></span>
+        </a>
+        <% categories.forEach((c) => { %>
+          <a class="chip <%= filters.category === c.key ? 'is-active' : '' %>" href="<%= pageUrl('/marketplace', { category: c.key, q: filters.q, location: filters.location }, 1) %>">
+            <%- icon(c.icon) %><%= c.label %> <span class="count num"><%= counts[c.key] %></span>
+          </a>
+        <% }) %>
+      </div>
+
+      <form class="search-box" method="get" action="/marketplace" role="search">
+        <% if (filters.category) { %><input type="hidden" name="category" value="<%= filters.category %>"><% } %>
+        <div class="field">
+          <%- icon('search') %>
+          <label class="visually-hidden" for="q">ابحث في الطلبات</label>
+          <input id="q" name="q" type="search" value="<%= filters.q || '' %>" placeholder="ابحث: باريستا، مكينة قهوة، تغليف...">
+        </div>
+        <button class="btn" type="submit">بحث</button>
+      </form>
+    </div>
+
+    <% if (items.length) { %>
+      <p class="faint"><span class="num"><%= pagination.total %></span> نتيجة<% if (filters.q) { %> لـ «<%= filters.q %>»<% } %></p>
+      <div class="item-grid">
+        <% items.forEach((item) => { %><%- include('../partials/item-card', { item }) %><% }) %>
+      </div>
+
+      <% if (pagination.pages > 1) { %>
+        <nav class="pagination" aria-label="الصفحات">
+          <% for (let p = 1; p <= pagination.pages; p += 1) { %>
+            <% if (p === pagination.page) { %>
+              <span class="is-current num" aria-current="page"><%= p %></span>
+            <% } else if (p === 1 || p === pagination.pages || Math.abs(p - pagination.page) <= 2) { %>
+              <a class="num" href="<%= pageUrl('/marketplace', filters, p) %>"><%= p %></a>
+            <% } else if (Math.abs(p - pagination.page) === 3) { %>
+              <span>…</span>
+            <% } %>
+          <% } %>
+        </nav>
+      <% } %>
+    <% } else { %>
+      <div class="empty">
+        <div class="tile"><%- icon(active ? active.icon : 'inbox') %></div>
+        <h3><%= filters.q ? 'لا توجد نتائج مطابقة' : 'لا توجد طلبات في هذا القسم بعد' %></h3>
+        <p><%= filters.q ? 'جرّب كلمات أخرى أو تصفح كل الأقسام.' : 'كن أول من ينشر هنا، وسيصل طلبك لأصحاب المطاعم والموردين.' %></p>
+        <a class="btn btn-gold" href="/marketplace/new<%= filters.category ? '?category=' + filters.category : '' %>"><%- icon('plus') %>انشر طلباً</a>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>

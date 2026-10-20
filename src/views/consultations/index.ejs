@@ -1,0 +1,29 @@
+<%- include('../partials/head') %>
+
+<section class="page-head">
+  <div class="pattern pattern-layer" aria-hidden="true"></div>
+  <div class="container">
+    <nav class="crumbs" aria-label="مسار التنقل"><a href="/">الرئيسية</a><span>/</span><span>استشارات الخبراء</span></nav>
+    <h1>استشارات الخبراء</h1>
+    <p>احجز جلسة مع مستشار معتمد في التشغيل، تقليل الهدر، تطوير القوائم، التسعير وافتتاح الفروع.</p>
+  </div>
+</section>
+
+<section class="section-tight">
+  <div class="container">
+    <% if (consultants.length) { %>
+      <div class="consultant-grid">
+        <% consultants.forEach((c) => { %><%- include('../partials/consultant-card', { c }) %><% }) %>
+      </div>
+    <% } else { %>
+      <div class="empty">
+        <div class="tile"><%- icon('chat') %></div>
+        <h3>لا يوجد مستشارون معتمدون بعد</h3>
+        <p>نراجع طلبات انضمام المستشارين حالياً. إن كانت لديك خبرة في القطاع، قدّم طلبك الآن.</p>
+        <a class="btn btn-gold" href="/register?role=CONSULTANT">انضم كمستشار</a>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>

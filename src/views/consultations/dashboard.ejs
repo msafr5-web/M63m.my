@@ -1,0 +1,130 @@
+<%- include('../partials/head') %>
+<% const isConsultant = currentUser.role === 'CONSULTANT'; %>
+
+<section class="page-head">
+  <div class="pattern pattern-layer" aria-hidden="true"></div>
+  <div class="container">
+    <div class="dash-head">
+      <span class="avatar lg"><%= initials(currentUser.full_name) %></span>
+      <div>
+        <h1>أهلاً، <%= currentUser.full_name.split(' ')[0] %></h1>
+        <p><%= roleLabel(currentUser.role) %><% if (isConsultant && !currentUser.is_verified) { %> · <span class="pending-note">حسابك قيد المراجعة من إدارة المنصة</span><% } %></p>
+      </div>
+      <div class="actions">
+        <a class="btn btn-gold" href="/marketplace/new"><%- icon('plus') %>نشر طلب</a>
+        <% if (!isConsultant) { %><a class="btn btn-ghost-light" href="/consultations"><%- icon('chat') %>احجز استشارة</a><% } %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container dash-body">
+    <div class="alert alert-success" data-flash="booked" hidden><%- icon('check-circle') %><span>تم تأكيد حجزك. ستجد رابط الجلسة أدناه، وسيصلك تذكير قبل الموعد.</span></div>
+
+    <div class="stat-grid">
+      <div class="stat"><span class="tile"><%- icon('calendar') %></span><div><b class="num"><%= stats.upcoming %></b><small><%= isConsultant ? 'حجوزات قادمة' : 'استشارات قادمة' %></small></div></div>
+      <div class="stat"><span class="tile"><%- icon('clock') %></span><div><b class="num"><%= stats.today %></b><small>جلسات اليوم</small></div></div>
+      <div class="stat"><span class="tile"><%- icon('check-circle') %></span><div><b class="num"><%= stats.completed %></b><small>جلسات مكتملة</small></div></div>
+      <div class="stat"><span class="tile"><%- icon('layers') %></span><div><b class="num"><%= stats.activeItems %></b><small>طلبات نشطة في السوق</small></div></div>
+    </div>
+
+    <div class="dash-grid">
+      <div class="panel">
+        <div class="panel-head">
+          <h2><%= isConsultant ? 'الحجوزات الواردة' : 'استشاراتي' %></h2>
+          <div class="tabs" role="tablist">
+            <button type="button" role="tab" class="is-active" data-tab="upcoming">القادمة <span class="num">(<%= upcoming.length %>)</span></button>
+            <button type="button" role="tab" data-tab="past">السابقة <span class="num">(<%= past.length %>)</span></button>
+          </div>
+        </div>
+
+        <% [['upcoming', upcoming], ['past', past]].forEach(([key, list]) => { %>
+          <div data-tab-panel="<%= key %>" <%= key === 'past' ? 'hidden' : '' %>>
+            <% if (list.length) { %>
+              <ul class="list">
+                <% list.forEach((c) => { const other = isConsultant ? c.client : c.consultant; const start = c.slot ? new Date(c.slot.start_time) : new Date(c.created_at); %>
+                  <li class="list-row">
+                    <div class="date-tile"><b class="num"><%= formatDate(start).split(' ')[0] %></b><small><%= formatDate(start).split(' ')[1] %></small></div>
+                    <div class="grow">
+                      <b><%= c.topic %></b>
+                      <small><%= isConsultant ? 'العميل' : 'المستشار' %>: <%= other ? other.full_name : '—' %> · <span><%= c.slot ? formatTime(c.slot.start_time) : "" %></span><% if (c.slot) { %> · <%= formatMoney(c.slot.price) %><% } %></small>
+                    </div>
+                    <span class="badge badge-<%= c.status %>"><%= statusLabel(c.status) %></span>
+                    <div class="row-actions">
+                      <% if (['SCHEDULED', 'IN_PROGRESS'].includes(c.status)) { %>
+                        <a class="btn btn-sm" href="/meet/<%= c.id %>"><%- icon('video') %>الجلسة</a>
+                        <% if (isConsultant && c.status === 'SCHEDULED') { %>
+                          <button class="btn btn-sm btn-ghost" type="button" data-consultation-status="IN_PROGRESS" data-id="<%= c.id %>">بدء</button>
+                        <% } %>
+                        <% if (isConsultant && c.status === 'IN_PROGRESS') { %>
+                          <button class="btn btn-sm btn-ghost" type="button" data-consultation-status="COMPLETED" data-id="<%= c.id %>">إنهاء</button>
+                        <% } %>
+                        <button class="btn btn-sm btn-danger" type="button" data-consultation-status="CANCELLED" data-id="<%= c.id %>" data-confirm="هل تريد إلغاء هذه الجلسة؟" aria-label="إلغاء"><%- icon('x') %></button>
+                      <% } %>
+                    </div>
+                  </li>
+                <% }) %>
+              </ul>
+            <% } else { %>
+              <div class="empty compact">
+                <div class="tile"><%- icon('calendar') %></div>
+                <h3><%= key === 'upcoming' ? 'لا توجد جلسات قادمة' : 'لا توجد جلسات سابقة' %></h3>
+                <% if (key === 'upcoming') { %>
+                  <p><%= isConsultant ? 'أضف مواعيد متاحة ليتمكن أصحاب المطاعم من الحجز.' : 'اختر مستشاراً واحجز موعدك الأول.' %></p>
+                  <% if (!isConsultant) { %><a class="btn btn-gold btn-sm" href="/consultations">تصفح المستشارين</a><% } %>
+                <% } %>
+              </div>
+            <% } %>
+          </div>
+        <% }) %>
+      </div>
+
+      <div>
+        <% if (isConsultant) { %>
+          <div class="panel">
+            <div class="panel-head"><h2>إضافة مواعيد متاحة</h2><a class="link-arrow" href="/consultations/<%= currentUser.id %>">ملفي العام<%- icon('arrow') %></a></div>
+            <form data-api-form="/api/v1/consultations/slots" data-slots-form data-reload novalidate>
+              <div class="alert alert-error" data-form-alert hidden></div>
+              <div data-slot-rows>
+                <div class="slot-row" data-slot-row>
+                  <div class="field-group"><label>البداية</label><input type="datetime-local" data-slot-field="start_time" required></div>
+                  <div class="field-group"><label>النهاية</label><input type="datetime-local" data-slot-field="end_time" required></div>
+                  <div class="field-group price-field"><label>السعر</label><input type="number" min="0" step="1" data-slot-field="price" placeholder="ر.س" required></div>
+                  <button class="icon-btn" type="button" data-remove-slot aria-label="حذف"><%- icon('x') %></button>
+                </div>
+              </div>
+              <div class="form-actions">
+                <button class="btn btn-ghost btn-sm" type="button" data-add-slot><%- icon('plus') %>موعد آخر</button>
+                <button class="btn btn-gold btn-sm" type="submit"><%- icon('check') %>حفظ المواعيد</button>
+              </div>
+            </form>
+          </div>
+        <% } %>
+
+        <div class="panel">
+          <div class="panel-head"><h2>طلباتي في السوق</h2><a class="link-arrow" href="/marketplace/new">طلب جديد<%- icon('arrow') %></a></div>
+          <% if (items.length) { %>
+            <ul class="list">
+              <% items.forEach((item) => { %>
+                <li class="list-row">
+                  <span class="cat-icon sm"><%- icon(categoryMap[item.category].icon) %></span>
+                  <a class="grow" href="/marketplace/<%= item.id %>"><b><%= item.title %></b><small><%= categoryMap[item.category].label %> · <%= relativeTime(item.created_at) %></small></a>
+                  <span class="badge badge-<%= item.status %>"><%= statusLabel(item.status) %></span>
+                </li>
+              <% }) %>
+            </ul>
+          <% } else { %>
+            <div class="empty compact">
+              <div class="tile"><%- icon('inbox') %></div>
+              <h3>لم تنشر أي طلب بعد</h3>
+              <p>وظيفة، معدات، توريد أو خدمة — انشرها في دقيقة.</p>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('../partials/foot') %>
