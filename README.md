@@ -74,3 +74,13 @@ docs/               REQUIREMENTS.md (ملخص PRD + SWET والقرارات)
 - **بدون Redis**: تُنفَّذ داخل العملية بعد إرسال الرد، بنفس سياسة المحاولات.
 - كل نتيجة نهائية تُسجَّل في `social_posts_log`: `SUCCESS` / `FAILED` / `SKIPPED` (منصة بلا مفاتيح).
 - X و Facebook مفعّلان عند وضع المفاتيح في `.env`. TikTok و Snapchat تتطلبان بطاقات وسائط مولّدة (مرحلة لاحقة) وتُسجَّلان حالياً `FAILED` بسبب واضح.
+
+## النشر على Vercel
+
+- المشروع `m63m-my` في فريق `msafr5-2354`، مربوط بفرع `main` — كل push ينشر تلقائياً.
+- `api/index.js` يصدّر تطبيق Express كدالة serverless؛ `vercel.json` يوجّه كل الطلبات إليها، و`public/` تُخدم من CDN.
+- قاعدة البيانات: Neon (Frankfurt، `fra1`) عبر Vercel Marketplace؛ `DATABASE_URL` يُحقن تلقائياً.
+- متغيرات الإنتاج: `JWT_SECRET`, `APP_URL`, `CORS_ORIGINS`, `DB_SSL=true`, `DB_SYNC=false`.
+- إنشاء الجداول أو المدير على Neon (من الجهاز المحلي بالرابط غير المجمّع `DATABASE_URL_UNPOOLED`):
+  `DATABASE_URL=... DB_SSL=true node scripts/sync.js` ثم `ADMIN_EMAIL=... ADMIN_PHONE=... node scripts/create-admin.js`
+- بدون Redis على Vercel: النشر الاجتماعي يكتمل قبل إرسال الرد (الدالة تتجمد بعده).
