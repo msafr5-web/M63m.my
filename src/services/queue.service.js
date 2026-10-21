@@ -82,6 +82,7 @@ function runInline(itemId, platform) {
 
   inFlight.add(task);
   task.finally(() => inFlight.delete(task));
+  return task;
 }
 
 /**
@@ -105,7 +106,9 @@ async function enqueueSocialPublish(itemId, platforms) {
     return 'queue';
   }
 
-  unique.forEach((platform) => runInline(itemId, platform));
+  const tasks = unique.map((platform) => runInline(itemId, platform));
+  // Serverless functions are frozen once the response is sent, so finish publishing first there.
+  if (process.env.VERCEL) await Promise.allSettled(tasks);
   return 'inline';
 }
 

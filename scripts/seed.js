@@ -19,7 +19,7 @@ const USERS = [
   { email: 'admin@m63m.my', full_name: 'إدارة المنصة', phone: '0500000001', role: 'ADMIN', is_verified: true },
   {
     email: 'consultant@m63m.my',
-    full_name: 'محمد الشحادة',
+    full_name: 'خالد المنصور',
     phone: '0500000002',
     role: 'CONSULTANT',
     is_verified: true,
