@@ -31,7 +31,7 @@
         <div class="panel">
           <h2>معلومات إضافية</h2>
           <dl class="spec-list">
-            <% meta.forEach(([k, v]) => { %><div><dt><%= metaLabel(k) %></dt><dd><%= v %></dd></div><% }) %>
+            <% meta.forEach(([k, v]) => { %><div><dt><%= metaLabel(k) %></dt><dd dir="auto"><%= v %></dd></div><% }) %>
           </dl>
         </div>
       <% } %>
@@ -40,7 +40,7 @@
     <aside class="sticky">
       <div class="panel">
         <span class="faint"><%= item.category === 'JOBS' ? 'الراتب' : 'السعر' %></span>
-        <div class="price-lg"><%= item.metadata && item.metadata.salary_range ? item.metadata.salary_range : (price || 'عند التواصل') %></div>
+        <div class="price-lg" dir="auto"><%= item.metadata && item.metadata.salary_range ? item.metadata.salary_range : (price || 'عند التواصل') %></div>
 
         <div class="owner-block">
           <span class="avatar lg"><%= initials(item.owner.full_name) %></span>

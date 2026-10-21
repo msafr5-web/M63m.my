@@ -1,0 +1,6 @@
+{
+  "name": "m63m-marketing-build",
+  "private": true,
+  "description": "Builds the client brochure (PDF) and presentation (PPTX). See ../README.md",
+  "dependencies": { "pptxgenjs": "^4", "puppeteer-core": "^24", "qrcode": "^1", "sharp": "^0.34" }
+}

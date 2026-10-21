@@ -593,3 +593,4 @@ form > .btn-block { margin-top: 26px; }
   .slot-row { grid-template-columns: minmax(0, 1fr); }
   .dash-head .actions { width: 100%; }
 }
+.price-lg, .spec-list dd { text-align: right; }
